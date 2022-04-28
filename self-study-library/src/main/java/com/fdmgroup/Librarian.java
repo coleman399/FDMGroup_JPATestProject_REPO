@@ -103,5 +103,4 @@ public class Librarian extends Person implements SearchForBook, ManageAccounts {
     public String toString() {
         return "Librarian [library=" + library + ", position=" + position + "]";
     }
-
 }

@@ -30,7 +30,7 @@ public class Library {
     private List<Patron> patrons;
 
     public Library() {
-        
+
     }
 
     public Library(String libraryName) {
@@ -95,6 +95,18 @@ public class Library {
 
     public void setPatrons(List<Patron> patrons) {
         this.patrons = patrons;
+    }
+
+    public void addLibrarian(Librarian librarian) {
+        librarians.add(librarian);
+    }
+
+    public void addPatron(Patron patron) {
+        patrons.add(patron);
+    }
+
+    public void addAccount(Account account) {
+        accounts.add(account);
     }
 
     @Override

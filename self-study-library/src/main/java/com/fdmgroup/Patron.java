@@ -4,9 +4,11 @@ package com.fdmgroup;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+@NamedQuery(name = "findByName", query = "SELECT p FROM Patron p WHERE p.name LIKE :name")
 @Entity
 @Table(name = "PATRONS")
 public class Patron extends Person implements SearchForBook {
@@ -42,17 +44,17 @@ public class Patron extends Person implements SearchForBook {
         this.account = account;
     }
 
-    public void checkOutBook(LibraryBook book) {
+    public void checkOutBook(Account account, LibraryBook book) {
         Librarian librarian = new Librarian("Betty", "Manager", library);
         librarian.manageAccount(account, Action.ADD_BOOK_TO_BORROWED_BOOKS, book);
     }
 
-    public void returnBook(LibraryBook book) {
+    public void returnBook(Account account, LibraryBook book) {
         Librarian librarian = new Librarian("Betty", "Manager", library);
         librarian.manageAccount(account, Action.REMOVE_BOOK_FROM_BORROWED_BOOKS, book);
     }
 
-    public void payFees() {
+    public void payFees(Account account) {
         Librarian librarian = new Librarian("Betty", "Manager", library);
         librarian.manageAccount(account, Action.REMOVE_CHARGES_FROM_ACCOUNT);
     }

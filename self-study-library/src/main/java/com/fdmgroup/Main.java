@@ -91,26 +91,34 @@ public class Main {
 
         EntityManager em = emf.createEntityManager();
 
+
         Library library = new Library("The Great Library of Alexandria");
-        Patron patron1 = new Patron("Nick", library);
+        Patron patron = new Patron("Nick", library);
         List<Author> authorList = new ArrayList<Author>();
-        Account account = new Account(patron1, library);
+        Account account = new Account(patron, library);
         Author JKR = new Author("JK Rolling");
         authorList.add(JKR);
-        account.setAccountOwner(patron1);
+        account.setAccountOwner(patron);
         Book hp3 = JKR.writeBook("hp3", new BigDecimal(20), JKR);
         Book hp4 = JKR.writeBook("hp4", new BigDecimal(20), JKR);
+        Librarian librarian = new Librarian("Betty", "Superintendent", library);
 
         LibraryBook hp1 = new LibraryBook(hp3.getTitle(), hp3.getAuthors(), hp3.getPrice(), library);
         LibraryBook hp2 = new LibraryBook(hp4.getTitle(), hp4.getAuthors(), hp4.getPrice(), library);
+        library.addBookToLibrary(hp1);
+        library.addBookToLibrary(hp2);
+        library.addLibrarian(librarian);
+        library.addAccount(account);
+        library.addPatron(patron);
+        patron.setAccount(account);
 
         hp1 = em.merge(hp1);
         hp2 = em.merge(hp2);
-        patron1.checkOutBook(hp1);
-        patron1.checkOutBook(hp2);
-        patron1 = em.merge(patron1);
-        hp1.setCheckedOutBy(patron1);
-        hp2.setCheckedOutBy(patron1);
+        patron.checkOutBook(patron.getAccount(), hp1);
+        patron.checkOutBook(patron.getAccount(), hp2);
+        patron = em.merge(patron);
+        hp1.setCheckedOutBy(patron);
+        hp2.setCheckedOutBy(patron);
 
         em.getTransaction().commit();
 
@@ -121,7 +129,7 @@ public class Main {
         final List<Patron> patronResults = findAllPatrons();
         System.out.println(patronResults);
 
-        final List<LibraryBook> bookResults = findAllLibraryBooksByPatron(patron1);
+        final List<LibraryBook> bookResults = findAllLibraryBooksByPatron(patron);
         System.out.println(bookResults);
 
         final Optional<Patron> foundPatron = findByLibraryBook(hp1);
