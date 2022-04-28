@@ -93,12 +93,16 @@ public class Main {
 
         Library library = new Library("The Great Library of Alexandria");
         Patron patron1 = new Patron("Nick", library);
-        List<String> authorList = new ArrayList<String>();
-        authorList.add("JK Rowling");
-        LibraryBook hp1 = new LibraryBook("Harry Potter and the Sorcerer's Stone", authorList, new BigDecimal(20),
-                library);
-        LibraryBook hp2 = new LibraryBook("Harry Potter and the Sorcerer's Stone", authorList, new BigDecimal(20),
-                library);
+        List<Author> authorList = new ArrayList<Author>();
+        Account account = new Account(patron1, library);
+        Author JKR = new Author("JK Rolling");
+        authorList.add(JKR);
+        account.setAccountOwner(patron1);
+        Book hp3 = JKR.writeBook("hp3", new BigDecimal(20), JKR);
+        Book hp4 = JKR.writeBook("hp4", new BigDecimal(20), JKR);
+
+        LibraryBook hp1 = new LibraryBook(hp3.getTitle(), hp3.getAuthors(), hp3.getPrice(), library);
+        LibraryBook hp2 = new LibraryBook(hp4.getTitle(), hp4.getAuthors(), hp4.getPrice(), library);
 
         hp1 = em.merge(hp1);
         hp2 = em.merge(hp2);

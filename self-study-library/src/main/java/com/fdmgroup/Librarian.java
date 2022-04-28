@@ -19,6 +19,10 @@ public class Librarian extends Person implements SearchForBook, ManageAccounts {
     @JoinColumn(name = "FK_LIBRARY_ID")
     private Library library;
 
+    public Librarian() {
+        
+    }
+
     public Librarian(String name, String position, Library library) {
         super(name);
         this.position = position;
@@ -81,8 +85,8 @@ public class Librarian extends Person implements SearchForBook, ManageAccounts {
     @Override
     public LibraryBook searchLibrary(String searchCriteria) {
         for (LibraryBook book : library.getLibraryBooks()) {
-            for (String author : book.getAuthors()) {
-                if (author == searchCriteria) {
+            for (Author author : book.getAuthors()) {
+                if (author.getName() == searchCriteria) {
                     return book;
                 }
             }

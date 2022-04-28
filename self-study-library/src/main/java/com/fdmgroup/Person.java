@@ -20,6 +20,9 @@ public abstract class Person {
     @Column(name = "NAME")
     private String name;
     
+    public Person() {
+        
+    }
     
     public Person(String name) {
         this.name = name;

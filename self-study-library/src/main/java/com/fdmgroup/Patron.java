@@ -1,6 +1,6 @@
 package com.fdmgroup;
 
-import javax.persistence.CascadeType;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -10,12 +10,16 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PATRONS")
 public class Patron extends Person implements SearchForBook {
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "FK_ACCOUNT_ID")
     private Account account;
     @ManyToOne
     @JoinColumn(name = "FK_LIBRARY_ID")
     private Library library;
+
+    public Patron() {
+
+    }
 
     public Patron(String name, Library library) {
         super(name);
@@ -56,8 +60,8 @@ public class Patron extends Person implements SearchForBook {
     @Override
     public LibraryBook searchLibrary(String searchCriteria) {
         for (LibraryBook book : library.getLibraryBooks()) {
-            for (String author : book.getAuthors()) {
-                if (author == searchCriteria) {
+            for (Author author : book.getAuthors()) {
+                if (author.getName() == searchCriteria) {
                     return book;
                 }
             }

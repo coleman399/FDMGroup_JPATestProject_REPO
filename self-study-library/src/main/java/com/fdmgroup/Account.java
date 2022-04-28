@@ -39,6 +39,10 @@ public class Account {
     @JoinColumn(name = "FK_LIBRARY_ID")
     private Library library;
 
+    public Account() {
+        
+    }
+
     public Account(Patron accountOwner, Library library) {
         Date date = new Date(System.currentTimeMillis());
         this.creationDate = date;
