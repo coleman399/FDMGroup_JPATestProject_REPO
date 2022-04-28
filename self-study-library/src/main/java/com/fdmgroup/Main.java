@@ -91,18 +91,16 @@ public class Main {
 
         EntityManager em = emf.createEntityManager();
 
-
         Library library = new Library("The Great Library of Alexandria");
         Patron patron = new Patron("Nick", library);
-        List<Author> authorList = new ArrayList<Author>();
         Account account = new Account(patron, library);
+        account.setAccountOwner(patron);
+        List<Author> authorList = new ArrayList<Author>();
         Author JKR = new Author("JK Rolling");
         authorList.add(JKR);
-        account.setAccountOwner(patron);
         Book hp3 = JKR.writeBook("hp3", new BigDecimal(20), JKR);
         Book hp4 = JKR.writeBook("hp4", new BigDecimal(20), JKR);
         Librarian librarian = new Librarian("Betty", "Superintendent", library);
-
         LibraryBook hp1 = new LibraryBook(hp3.getTitle(), hp3.getAuthors(), hp3.getPrice(), library);
         LibraryBook hp2 = new LibraryBook(hp4.getTitle(), hp4.getAuthors(), hp4.getPrice(), library);
         library.addBookToLibrary(hp1);
@@ -111,6 +109,8 @@ public class Main {
         library.addAccount(account);
         library.addPatron(patron);
         patron.setAccount(account);
+
+        em.getTransaction().begin();
 
         hp1 = em.merge(hp1);
         hp2 = em.merge(hp2);
