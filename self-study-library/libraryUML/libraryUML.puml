@@ -1,0 +1,106 @@
+@startuml libraryUML
+skinparam groupInheritance 2
+
+
+class Book {
+    - bookId: int
+    - title: String
+    - authors: List<String>
+    - price: BigDecimal
+
+    + void addAuthor(String author)
+}
+
+class LibraryBook {
+    - dueDate: Date
+    - library: Library
+    - checkedOutBy: Patron
+}
+
+class Author extends Person {
+    - writtenBooks: List<Book>
+    + Book writeBook()
+}
+
+class Library {
+    - id: int
+    - libraryName: String
+    - libraryBooks: List<LibraryBook>
+    - librarians: List<Librarian>
+    - accounts: List<Account>
+    - patrons: List<Patron>
+    + void addBookToLibrary(LibraryBook book)
+    + void removeBookFromLibrary(LibraryBook book)
+    + void addLibrarianToLibrary(Librarian librarian)
+    + void removeLibrarianFromLibrary(Librarian librarian)
+    + void addAccountToLibrary(Account account)
+    + void removeAccountFromLibrary(Account account)
+    + void addPatronToLibrary(Patron patron)
+    + void removePatronFromLibrary(Patron patron)
+}
+
+class Account {
+    - accountNumber: int
+    - creationDate: Date
+    - borrowedBooks: List<LibraryBook>
+    - balance: BigDecimal
+    - accountOwner: Patron
+    - library: Library
+
+    + void addToBalance(BigDecimal amount)
+    + void removeFromBalance(BigDecimal amount)
+    + void removeBookFromBorrowedBooks(LibraryBook libraryBook)
+    + void addBookToBorrowedBooks(LibraryBook libraryBook)
+}
+
+abstract class Person {
+    - id: int
+    - name: String
+}
+
+class Librarian extends Person implements SearchForBook, ManageAccounts {
+    - position: String
+    - library: Library
+}
+
+class Patron extends Person implements SearchForBook {
+    - account: Account
+    - library: Library
+
+    + void checkOutBook(LibraryBook book)
+    + void returnBook(LibraryBook book)
+    + void payFees()
+}
+
+interface SearchForBook <<interface>> {
+    + Book searchLibrary(String searchCriteria)
+}
+
+interface ManageAccounts <<interface>> {
+    + void manageAccount(Account account, Action action)
+}
+
+enum Action <<enumeration>>{
+    CHECK_FOR_LATE_BOOKS
+    REMOVE_CHARGES_FROM_ACCOUNT
+    REMOVE_BOOK_FROM_BORROWED_BOOKS
+    ADD_BOOK_TO_BORROWED_BOOKS
+}
+
+hide <<enumeration>> methods
+
+hide <<interface>> fields
+
+
+
+Book  <|--  LibraryBook
+Book " * "  o--o "*" Author
+Patron " * " --* "  1  " Library
+LibraryBook "  *  " --o "1" Library
+Account "  *  " --* "1" Library
+Account "1" o--o "1" Patron
+ManageAccounts ..> Action
+Librarian " * " --* "1 " Library
+LibraryBook " * " ..> "1" Patron
+Patron ..> Librarian
+@enduml
