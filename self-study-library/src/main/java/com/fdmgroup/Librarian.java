@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -16,11 +15,10 @@ public class Librarian extends Person implements SearchForBook, ManageAccounts {
     @Column(name = "POSITION")
     private String position;
     @ManyToOne
-    @JoinColumn(name = "FK_LIBRARY_ID")
     private Library library;
 
     public Librarian() {
-        
+
     }
 
     public Librarian(String name, String position, Library library) {

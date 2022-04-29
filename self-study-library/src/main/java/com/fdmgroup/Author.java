@@ -6,34 +6,38 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 
+@NamedQuery(name = "findByAuthor", query = "SELECT a FROM Author a WHERE a.name = :name")
 @Entity
 public class Author extends Person {
     @ManyToMany
-    private List<Book> writtenWorks;
+    private List<LibraryBook> writtenWorks;
 
-    public Author() {   
+    public Author() {
     }
 
     public Author(String name) {
         super(name);
-        this.writtenWorks = new ArrayList<Book>();
+        this.writtenWorks = new ArrayList<LibraryBook>();
     }
 
-    public List<Book> getWrittenBooks() {
+    public List<LibraryBook> getWrittenBooks() {
         return writtenWorks;
     }
 
-    public void setBooks(List<Book> books) {
+    public void setBooks(List<LibraryBook> books) {
         this.writtenWorks = books;
     }
 
+    public void addBookToWorks(LibraryBook book) {
+        writtenWorks.add(book);
+    }
 
-
-    public Book writeBook(String title, BigDecimal price, Author author) {
+    public LibraryBook writeBook(String title, BigDecimal price, Author author, Library library) {
         List<Author> authors = new ArrayList<Author>();
         authors.add(author);
-        Book book = new Book(title, authors, price);
+        LibraryBook book = new LibraryBook(title, authors, price, library);
         writtenWorks.add(book);
         return book;
     }

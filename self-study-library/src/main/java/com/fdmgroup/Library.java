@@ -3,6 +3,7 @@ package com.fdmgroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,14 +21,14 @@ public class Library {
     private int id;
     @Column(name = "LIBRARY_NAME")
     private String libraryName;
-    @OneToMany(mappedBy = "library")
-    private List<LibraryBook> libraryBooks;
-    @OneToMany(mappedBy = "library")
-    private List<Librarian> librarians;
-    @OneToMany(mappedBy = "library")
-    private List<Account> accounts;
-    @OneToMany(mappedBy = "library")
-    private List<Patron> patrons;
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    private List<LibraryBook> libraryBooks = new ArrayList<LibraryBook>();
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    private List<Librarian> librarians = new ArrayList<Librarian>();;
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    private List<Account> accounts = new ArrayList<Account>();;
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    private List<Patron> patrons = new ArrayList<Patron>();
 
     public Library() {
 
@@ -35,10 +36,6 @@ public class Library {
 
     public Library(String libraryName) {
         this.libraryName = libraryName;
-        this.libraryBooks = new ArrayList<LibraryBook>();
-        this.librarians = new ArrayList<Librarian>();
-        this.accounts = new ArrayList<Account>();
-        this.patrons = new ArrayList<Patron>();
     }
 
     public void addBookToLibrary(LibraryBook libraryBook) {

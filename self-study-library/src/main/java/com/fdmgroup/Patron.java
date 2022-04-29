@@ -1,6 +1,8 @@
 package com.fdmgroup;
 
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -42,6 +44,10 @@ public class Patron extends Person implements SearchForBook {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public List<LibraryBook> getBorrowedBooks() {
+        return account.getBorrowedBooks();
     }
 
     public void checkOutBook(Account account, LibraryBook book) {

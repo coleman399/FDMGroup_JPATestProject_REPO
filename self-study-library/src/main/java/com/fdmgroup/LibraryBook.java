@@ -4,13 +4,9 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -19,15 +15,9 @@ public class LibraryBook extends Book {
     @Column(name = "DUE_DATE")
     private Date dueDate;
     @ManyToOne
-    @JoinColumn(name = "LIBRARY_ID")
     private Library library;
-    @OneToOne
-    @JoinColumn(name = "CHECKED_OUT_BY")
+    @ManyToOne
     private Patron checkedOutBy;
-    @ElementCollection
-    @CollectionTable(name = "AUTHORS", joinColumns = @JoinColumn(name = "id", referencedColumnName = "ID"))
-    @Column(name = "AUTHOR")
-    private List<Author> authors;
 
     public LibraryBook() {
 
@@ -44,14 +34,6 @@ public class LibraryBook extends Book {
 
     public Date getDueDate() {
         return dueDate;
-    }
-
-    public List<Author> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
     }
 
     public Library getLibrary() {

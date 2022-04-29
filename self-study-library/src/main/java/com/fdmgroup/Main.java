@@ -14,20 +14,20 @@ public class Main {
 
     static EntityManagerFactory emf;
 
-    public static List<Librarian> findAllLibrarians() {
+    public static List<Library> findAllBooksInLibrary() {
         final EntityManager em = emf.createEntityManager();
-        final String jpql = "SELECT l FROM librarian l";
-        final TypedQuery<Librarian> query = em.createQuery(jpql, Librarian.class);
-        final List<Librarian> results = query.getResultList();
+        final String jpql = "SELECT l FROM library l";
+        final TypedQuery<Library> query = em.createQuery(jpql, Library.class);
+        final List<Library> results = query.getResultList();
         em.close();
         return results;
     }
 
-    public static List<LibraryBook> findAllLibraryBooks() {
-        final EntityManager em = emf.createEntityManager();
-        final String jpql = "SELECT l FROM LibraryBook l";
-        final TypedQuery<LibraryBook> query = em.createQuery(jpql, LibraryBook.class);
-        final List<LibraryBook> results = query.getResultList();
+    public static List<Author> getAuthorName(String name) {
+        EntityManager em = emf.createEntityManager();
+        final TypedQuery<Author> query = em.createNamedQuery("findByAuthor", Author.class);
+        query.setParameter("name", name);
+        final List<Author> results = query.getResultList();
         em.close();
         return results;
     }
@@ -87,56 +87,31 @@ public class Main {
 
     public static void main(String[] args) {
 
+        List<Author> authors = new ArrayList<Author>();
+        Author JKR = new Author("JK Rowling");
+        authors.add(JKR);
+
+        LibraryBook book1 = new LibraryBook("Harry Potter 1", authors, new BigDecimal(20));
+        LibraryBook book2 = new LibraryBook("Harry Potter 2", authors, new BigDecimal(20));
+
         emf = Persistence.createEntityManagerFactory("JPA");
 
         EntityManager em = emf.createEntityManager();
-
-        Library library = new Library("The Great Library of Alexandria");
-        Patron patron = new Patron("Nick", library);
-        Account account = new Account(patron, library);
-        account.setAccountOwner(patron);
-        List<Author> authorList = new ArrayList<Author>();
-        Author JKR = new Author("JK Rolling");
-        authorList.add(JKR);
-        Book hp3 = JKR.writeBook("hp3", new BigDecimal(20), JKR);
-        Book hp4 = JKR.writeBook("hp4", new BigDecimal(20), JKR);
-        Librarian librarian = new Librarian("Betty", "Superintendent", library);
-        LibraryBook hp1 = new LibraryBook(hp3.getTitle(), hp3.getAuthors(), hp3.getPrice(), library);
-        LibraryBook hp2 = new LibraryBook(hp4.getTitle(), hp4.getAuthors(), hp4.getPrice(), library);
-        library.addBookToLibrary(hp1);
-        library.addBookToLibrary(hp2);
-        library.addLibrarian(librarian);
-        library.addAccount(account);
-        library.addPatron(patron);
-        patron.setAccount(account);
-
         em.getTransaction().begin();
-
-        hp1 = em.merge(hp1);
-        hp2 = em.merge(hp2);
-        patron.checkOutBook(patron.getAccount(), hp1);
-        patron.checkOutBook(patron.getAccount(), hp2);
-        patron = em.merge(patron);
-        hp1.setCheckedOutBy(patron);
-        hp2.setCheckedOutBy(patron);
-
+        em.merge(JKR);
         em.getTransaction().commit();
-
         em.close();
+
+        System.out.println(getAuthorName("JK Rowling"));
 
         em = emf.createEntityManager();
+        em.getTransaction().begin();
+        book1 = em.merge(book1);
+        book2 = em.merge(book2);
+        JKR = em.merge(JKR);
 
-        final List<Patron> patronResults = findAllPatrons();
-        System.out.println(patronResults);
 
-        final List<LibraryBook> bookResults = findAllLibraryBooksByPatron(patron);
-        System.out.println(bookResults);
-
-        final Optional<Patron> foundPatron = findByLibraryBook(hp1);
-        if (foundPatron.isPresent())
-            System.out.println(foundPatron.get());
-
-        em.close();
+        
 
         emf.close();
 
