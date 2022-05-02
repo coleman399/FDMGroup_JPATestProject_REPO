@@ -14,11 +14,11 @@ public class Main {
 
     static EntityManagerFactory emf;
 
-    public static List<Library> findAllBooksInLibrary() {
+    public static List<LibraryBook> findAllBooksInLibrary(Library library) {
         final EntityManager em = emf.createEntityManager();
-        final String jpql = "SELECT l FROM Library l";
-        final TypedQuery<Library> query = em.createQuery(jpql, Library.class);
-        final List<Library> results = query.getResultList();
+        final String jpql = "SELECT l FROM LibraryBook l WHERE l.checkedOutBy = :patron";
+        final TypedQuery<LibraryBook> query = em.createQuery(jpql, LibraryBook.class);
+        final List<LibraryBook> results = query.getResultList();
         em.close();
         return results;
     }
@@ -91,43 +91,47 @@ public class Main {
         Author JKR = new Author("JK Rowling");
         authors.add(JKR);
         Library library = new Library("The Library");
-        LibraryBook book1 = new LibraryBook("Harry Potter 1", authors, new BigDecimal(20));
-        LibraryBook book2 = new LibraryBook("Harry Potter 2", authors, new BigDecimal(20));
+        LibraryBook book1 = new LibraryBook("Harry Potter 1", authors, new BigDecimal(20), library);
+        LibraryBook book2 = new LibraryBook("Harry Potter 2", authors, new BigDecimal(20), library);
 
         emf = Persistence.createEntityManagerFactory("JPA");
 
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.merge(JKR);
+        library = em.merge(library);
+        JKR = em.merge(JKR);
         em.getTransaction().commit();
         em.close();
 
         System.out.println("getAuthorByName: " + getAuthorByName("JK Rowling"));
 
+
+
+        // library = em.merge(library);
         em = emf.createEntityManager();
         em.getTransaction().begin();
-        library = em.merge(library);
-        book1 = em.merge(book1);
+        System.out.println("BOOK MERGE STARTED");
         library.addBookToLibrary(book1);
-        book2 = em.merge(book2);
         library.addBookToLibrary(book2);
+        // book1 = em.merge(book1);
+        // book2 = em.merge(book2);
+        System.out.println("BOOK MERGE COMPLETE");
         em.getTransaction().commit();
         em.close();
 
-        System.out.println("findAllBooksInLibrary: " + findAllBooksInLibrary());
-        System.out.println("findAllAuthors: " + findAllAuthors());
+        System.out.println("findAllBooksInLibrary: " + findAllBooksInLibrary(library));
+        // System.out.println("findAllAuthors: " + findAllAuthors());
 
+        // em = emf.createEntityManager();
+        // em.getTransaction().begin();
+        // book1.setLibrary(library);
+        // book2.setLibrary(library);
+        // book1 = em.merge(book1);
+        // book2 = em.merge(book2);
+        // em.getTransaction().commit();
+        // em.close();
 
-        em = emf.createEntityManager();
-        em.getTransaction().begin();
-        book1.setLibrary(library);
-        book2.setLibrary(library);
-        em.merge(book1);
-        em.merge(book2);
-        em.getTransaction().commit();
-        em.close();
-
-        System.out.println("findAllBooksInLibrary: " + findAllBooksInLibrary());
+        // System.out.println("findAllBooksInLibrary: " + findAllBooksInLibrary());
 
         emf.close();
 
