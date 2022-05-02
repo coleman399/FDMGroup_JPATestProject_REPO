@@ -4,25 +4,25 @@ package com.fdmgroup;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@NamedQuery(name = "findByName", query = "SELECT p FROM Patron p WHERE p.name LIKE :name")
+@NamedQuery(name = "findPatronByName", query = "SELECT p FROM Patron p WHERE p.name LIKE :name")
 @Entity
 @Table(name = "PATRONS")
 public class Patron extends Person implements SearchForBook {
     @OneToOne
     @JoinColumn(name = "FK_ACCOUNT_ID")
     private Account account;
-    @ManyToOne
-    @JoinColumn(name = "FK_LIBRARY_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PATRON_ID")
     private Library library;
 
     public Patron() {
-
     }
 
     public Patron(String name, Library library) {
@@ -84,7 +84,7 @@ public class Patron extends Person implements SearchForBook {
 
     @Override
     public String toString() {
-        return "Patron [account=" + account + ", library=" + library + "]";
+        return "Patron [account=" + account + ", library=" + library + "] [" + super.toString() + "]";
     }
 
 }

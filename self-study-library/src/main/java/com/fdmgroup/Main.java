@@ -16,23 +16,23 @@ public class Main {
 
     public static List<Library> findAllBooksInLibrary() {
         final EntityManager em = emf.createEntityManager();
-        final String jpql = "SELECT l FROM library l";
+        final String jpql = "SELECT l FROM Library l";
         final TypedQuery<Library> query = em.createQuery(jpql, Library.class);
         final List<Library> results = query.getResultList();
         em.close();
         return results;
     }
 
-    public static List<Author> getAuthorName(String name) {
+    public static List<Author> getAuthorByName(String name) {
         EntityManager em = emf.createEntityManager();
-        final TypedQuery<Author> query = em.createNamedQuery("findByAuthor", Author.class);
+        final TypedQuery<Author> query = em.createNamedQuery("findAuthorByName", Author.class);
         query.setParameter("name", name);
         final List<Author> results = query.getResultList();
         em.close();
         return results;
     }
 
-    public static List<LibraryBook> findAllLibraryBooksByPatron(Patron patron) {
+    public static List<LibraryBook> findAllBooksByPatron(Patron patron) {
         final EntityManager em = emf.createEntityManager();
         final String jpql = "SELECT l FROM LibraryBook l WHERE l.checkedOutBy = :patron";
         final TypedQuery<LibraryBook> query = em.createQuery(jpql, LibraryBook.class);
@@ -60,10 +60,10 @@ public class Main {
         return results;
     }
 
-    public static Optional<Patron> findByLibraryBook(LibraryBook book) {
+    public static Optional<Patron> findPatronByLibraryBook(LibraryBook book) {
         Optional<Patron> foundPatron = Optional.empty();
         final EntityManager em = emf.createEntityManager();
-        final String jpql = "SELECT book.checkOutBy FROM LibraryBook l WHERE l = :book";
+        final String jpql = "SELECT book.checkOutBy FROM LibraryBook lb WHERE lb = :book";
         final TypedQuery<Patron> query = em.createQuery(jpql, Patron.class);
         query.setParameter("book", book);
         final List<Patron> results = query.getResultList();
@@ -73,10 +73,10 @@ public class Main {
         return foundPatron;
     }
 
-    public static Optional<Patron> findByName(final String name) {
+    public static Optional<Patron> findPatronByName(final String name) {
         Optional<Patron> foundPatron = Optional.empty();
         final EntityManager em = emf.createEntityManager();
-        final TypedQuery<Patron> query = em.createNamedQuery("findByName", Patron.class);
+        final TypedQuery<Patron> query = em.createNamedQuery("findPatronByName", Patron.class);
         query.setParameter("name", name);
         final List<Patron> results = query.getResultList();
         if (!results.isEmpty())
@@ -90,7 +90,7 @@ public class Main {
         List<Author> authors = new ArrayList<Author>();
         Author JKR = new Author("JK Rowling");
         authors.add(JKR);
-
+        Library library = new Library("The Library");
         LibraryBook book1 = new LibraryBook("Harry Potter 1", authors, new BigDecimal(20));
         LibraryBook book2 = new LibraryBook("Harry Potter 2", authors, new BigDecimal(20));
 
@@ -102,16 +102,32 @@ public class Main {
         em.getTransaction().commit();
         em.close();
 
-        System.out.println(getAuthorName("JK Rowling"));
+        System.out.println("getAuthorByName: " + getAuthorByName("JK Rowling"));
 
         em = emf.createEntityManager();
         em.getTransaction().begin();
+        library = em.merge(library);
         book1 = em.merge(book1);
+        library.addBookToLibrary(book1);
         book2 = em.merge(book2);
-        JKR = em.merge(JKR);
+        library.addBookToLibrary(book2);
+        em.getTransaction().commit();
+        em.close();
+
+        System.out.println("findAllBooksInLibrary: " + findAllBooksInLibrary());
+        System.out.println("findAllAuthors: " + findAllAuthors());
 
 
-        
+        em = emf.createEntityManager();
+        em.getTransaction().begin();
+        book1.setLibrary(library);
+        book2.setLibrary(library);
+        em.merge(book1);
+        em.merge(book2);
+        em.getTransaction().commit();
+        em.close();
+
+        System.out.println("findAllBooksInLibrary: " + findAllBooksInLibrary());
 
         emf.close();
 

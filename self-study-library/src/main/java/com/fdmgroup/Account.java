@@ -29,7 +29,7 @@ public class Account {
     private List<LibraryBook> borrowedBooks;
     @Column(name = "BALANCE")
     private BigDecimal balance;
-    @OneToOne(mappedBy = "account")
+    @OneToOne
     private Patron accountOwner;
     @ManyToOne
     private Library library;

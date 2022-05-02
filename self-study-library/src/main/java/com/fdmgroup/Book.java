@@ -23,8 +23,7 @@ public class Book {
     private int bookId;
     @Column(name = "BOOK_TITLE")
     private String title;
-    @ManyToMany(targetEntity = Author.class)
-    @Column(name = "AUTHOR")
+    @ManyToMany(mappedBy="writtenWorks")
     private List<Author> authors;
     @Column(name = "PRICE")
     private BigDecimal price;

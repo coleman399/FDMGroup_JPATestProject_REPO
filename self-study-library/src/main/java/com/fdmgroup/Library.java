@@ -27,11 +27,10 @@ public class Library {
     private List<Librarian> librarians = new ArrayList<Librarian>();;
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     private List<Account> accounts = new ArrayList<Account>();;
-    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @OneToMany(mappedBy = "library")
     private List<Patron> patrons = new ArrayList<Patron>();
 
     public Library() {
-
     }
 
     public Library(String libraryName) {

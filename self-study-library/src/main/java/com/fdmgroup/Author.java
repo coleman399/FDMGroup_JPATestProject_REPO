@@ -5,21 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 
-@NamedQuery(name = "findByAuthor", query = "SELECT a FROM Author a WHERE a.name = :name")
+@NamedQuery(name = "findAuthorByName", query = "SELECT a FROM Author a WHERE a.name LIKE :name")
 @Entity
 public class Author extends Person {
     @ManyToMany
-    private List<LibraryBook> writtenWorks;
+    @JoinTable(name = "AUTHORS_BOOKS", 
+    joinColumns=@JoinColumn(name = "AUTHOR_ID", referencedColumnName = "ID"),
+    inverseJoinColumns = @JoinColumn(name = "BOOK_ID"))
+    private List<LibraryBook> writtenWorks = new ArrayList<LibraryBook>();
 
     public Author() {
     }
 
     public Author(String name) {
         super(name);
-        this.writtenWorks = new ArrayList<LibraryBook>();
     }
 
     public List<LibraryBook> getWrittenBooks() {
@@ -44,7 +48,8 @@ public class Author extends Person {
 
     @Override
     public String toString() {
-        return "Author  writtenWorks=" + writtenWorks + "]";
+        return "Author [writtenWorks=" + writtenWorks + "] [" + super.toString();
     }
 
+    
 }
